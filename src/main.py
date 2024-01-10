@@ -5,21 +5,22 @@ import random
 from objects import *
 from utils import *
 
-
 # pygame setup
 pygame.init()
-WIDTH = 1400
-HEIGHT = 600
 
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Physics Playground")
+
+WIDTH = pygame.display.Info().current_w - 150
+HEIGHT = pygame.display.Info().current_h - 150
+screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
+
 clock = pygame.time.Clock()
 running = True
 dt = 0
-mode = 0 # code for the different modes: 0 is bouncing balls, 1 is gravity simulation
-pygame.font.init() # you have to call this at the start, 
-                   # if you want to use this module.
+mode = 0  # code for the different modes: 0 is bouncing balls, 1 is gravity simulation
+pygame.font.init()  # you have to call this at the start if you want to use this module.
 my_font = pygame.font.SysFont('Comic Sans MS', 30)
-test_ball = GravityBall(10, 40, screen.get_width() / 2, screen.get_height() / 4, 0, 0, 0, G_0*FUDGE)
+test_ball = GravityBall(10, 40, screen.get_width() / 2, screen.get_height() / 4, 0, 0, 0, G_0 * FUDGE)
 # player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 bouncing_balls = []
 balls_colors = []
@@ -28,6 +29,10 @@ while running:
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
     for event in pygame.event.get():
+        if event.type == pygame.VIDEORESIZE:
+            WIDTH = screen.get_width()
+            HEIGHT = screen.get_height()
+            screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -39,13 +44,13 @@ while running:
                     collides = True
                     continue
             if (not collides):
-                bouncing_balls.append(GravityBall(10, 40, x, y, random.randint(-100, 100), random.randint(-100, -50), 0, G_0*FUDGE))
+                bouncing_balls.append(
+                    GravityBall(10, 40, x, y, random.randint(-100, 100), random.randint(-100, -50), 0, G_0 * FUDGE))
                 balls_colors.append((random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_r:
                 screen.fill("cyan2")  # Fill the screen with cyan2 color
                 bouncing_balls.clear()
-            
 
     # fill the screen with a color to wipe away anything from last frame
     screen.fill("cyan2")
@@ -72,7 +77,7 @@ while running:
                 if (check_collision(ball, bouncing_balls[j])):
                     ball_collision(ball, bouncing_balls[j])
                 j -= 1
-                    
+
             pygame.draw.circle(screen, color, pygame.Vector2(ball.get_x(), ball.get_y()), ball.get_radius())
             pygame.draw.circle(screen, (0, 0, 0), (ball.get_x(), ball.get_y()), ball.get_radius() + 1, width=2)
 
